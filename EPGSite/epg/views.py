@@ -5,7 +5,7 @@ from util import *
 
 def showlist(request):
     if 'time' in request.POST and request.POST['time']:
-        time = datetime.strptime(request.POST['time'], "%m/%d/%y %H:%M:%S")
+        time = datetime.strptime(request.POST['time'], "%m/%d/%Y %H:%M:%S")
         orderItems = GetAllPrograms(time)
         suggestItems = GetSuggestPrograms(orderItems)
         return render_to_response('index.html', locals())
@@ -20,3 +20,11 @@ def inforAction(request,id):
 
 def playAction(request,id):
     return render_to_response('play.html',locals());
+
+# TBD: ShowHistory view
+# maybe like this:
+# history = GetHistory()
+# return render_to_response('index.html', history) ... or sth.
+
+
+# TBD: AddHistory view

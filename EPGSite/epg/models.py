@@ -11,5 +11,11 @@ class Program(models.Model):
     def __unicode__(self):
         return self.title
 
-
+class History(models.Model):
+    programid = models.ForeignKey(Program)
+    # duration = models.IntegerField() # duration time informed that if the program is prefered by the user
+    like = models.IntegerField()
+    
+    def __unicode__(self):
+        return '%d %s %s' % (self.like, self.programid.id, self.programid.title)
 
