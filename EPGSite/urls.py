@@ -1,3 +1,4 @@
+import EPGSite
 from django.conf.urls.defaults import *
 
 
@@ -15,13 +16,12 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     # (r'^admin/', include(admin.site.urls)),
     
-    #(r'^images/(?P<path>.*)$', 'django.views.static.serve',{'document_root': EPGSite.settings.IMAGES}),
+    #(r'^images/(?P<path>.*)$', 'django.views.static.serve',{'document_root': settings.IMAGES}),
     #(r'^static/(?P<path>.*)$', 'django.views.static.serve',{'document_root': settings.STATIC_PATH}),
     
+    (r'^$', include('epg.urls')),
     (r'^index/', include('epg.urls')),
-       
-    #('^infor/(\d*)/$',inforAction),
-    #('^play/(\d*)/$',playAction),
+
 )
 
 

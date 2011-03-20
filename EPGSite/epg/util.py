@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.db.models import Q
 from EPGSite.epg.models import Program
+from datetime import datetime
 from svmutil import *
 from smallseg import SEG
 import os
@@ -93,3 +94,11 @@ def GetSuggestPrograms(AllPrograms):
             
     # 返回推荐列表
     return SuggestPrograms
+
+
+if __name__ == "__main__":
+    #UserHistory = [1, 2, 3]
+    #GetSuggestPrograms(UserHistory)
+    time = datetime(2009,3,14,23,32,30)
+    p = GetAllPrograms(time)
+    print GetSuggestPrograms(p)
