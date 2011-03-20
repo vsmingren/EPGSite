@@ -105,6 +105,20 @@ def GetSuggestPrograms(AllPrograms):
     # 返回推荐列表
     return SuggestPrograms
 
+# TBD:什么时候触发这个函数？怎么迭代？ 
+def GenerateHistoryModel():
+    '生成用户模型'
+    # 从数据库中读出最近50条收视历史数据
+    # 转换成libsvm可读的文本文件
+    # y, x = svm_read_problem('../heart_scale')
+    # 调整SVM参数，具体还需要看书
+    # param = svm_parameter('-s 3 -c 5 -h 0')
+    # 用读出的数据训练模型
+    # m = svm_train(prob, param)
+    # 将模型写到文件
+    # svm_save_model('model_file', m)
+    pass
+
 if __name__ == "__main__":
     time = datetime(2010,8,8,8,8,8)
     p = GetAllPrograms(time)
