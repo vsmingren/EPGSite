@@ -32,8 +32,8 @@ $(function() {
 
 <div id="timer" style="float:left;width:20%;height:80%">
     <h2>请选择时间点：</h2>
-	<form action="/" method="POST">
-    <p><input type="text" name="time" id="datetime" value="08/08/2010 08:08:08"></p>
+	<form action="/index/" method="POST">
+    <p><input type="text" name="time" id="datetime" value="03/16/2011 08:08:08"></p>
     
     <input type="submit" value="提交"/>
 </div>
@@ -43,7 +43,7 @@ $(function() {
     <ul>
         {% for item in orderItems %}
             <li>
-                {{ item.channel }} - <a href="/index/infor/{{ item.id }}">{{ item.title }}</a>
+                {{ item.channel }} - <a href="/infor/{{ item.id }}">{{ item.title }}</a>
             </li>
         {% endfor %}
     <ul>
@@ -54,7 +54,7 @@ $(function() {
     <ul>
         {% for item in suggestItems %}
             <li>
-                {{ item.channel }} - <a href="/index/infor/{{ item.id }}">{{ item.title }}</a>
+                {{ item.channel }} - <a href="/infor/{{ item.id }}">{{ item.title }}</a>
             </li>
         {% endfor %}
     <ul>
