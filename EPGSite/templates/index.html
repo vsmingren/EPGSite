@@ -39,7 +39,7 @@ $(function() {
 </div>
 
 <div style="float:left;width:40%;height:80%;overflow-y:scroll">
-<h3>当前时间可选节目：</h3>
+<h3>当前时间可选节目：{{ n1 }} </h3>
     <ul>
         {% for item in orderItems %}
             <li>
@@ -50,7 +50,7 @@ $(function() {
 </div>
 
 <div style="float:left;width:40%;height:80%;overflow-y:scroll">
-<h3>系统推荐节目：</h3>
+<h3>系统推荐节目：{{ n2 }}</h3>
     <ul>
         {% for item in suggestItems %}
             <li>

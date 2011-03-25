@@ -6,6 +6,7 @@ from EPGSite.epg.models import Program, History
 from svmutil import *
 from smallseg import SEG
 from feature_TFIDF import *
+from cosdistance import *
 
 seg = SEG()
 
@@ -25,7 +26,7 @@ def GetAllPrograms(time):
 def WriteHistory(pid, prefer):
     History.objects.create(programid_id = pid, like = prefer)
     
-def GetSuggestPrograms(Programs, BUILD = 1):
+def GetSuggestProgramsSVM(Programs, BUILD = 1):
     '从所有节目列表中选取推荐节目，BUILD是否需要重新生成历史模型(TF-IDF + SVM)'
     # 加载汉语词典，确定词的ID作为维度
     Dictionary = {}    
@@ -137,26 +138,125 @@ def GetSuggestPrograms(Programs, BUILD = 1):
     # 返回推荐列表
     return SuggestPrograms
 
+#def cosine_distance(u, v):
+#    return numpy.dot(u, v) / (math.sqrt(numpy.dot(u, u)) * math.sqrt(numpy.dot(v, v)))
+
+def GetSuggestPrograms(Programs, BUILD = 0):
+    '从所有节目列表中选取推荐节目，BUILD是否需要重新生成历史模型(TF-IDF + VSM)'
+    # 加载汉语词典，确定词的ID作为维度
+    Dictionary = {}    
+    fileDictionary = open(os.path.join(os.path.dirname(__file__),'Dictionary').replace('\\','/'), 'r')
+    listDictionary = fileDictionary.readlines()
+    idx = 1
+    for eachline in listDictionary:
+        eachline = eachline.rstrip()
+        # print eachline
+        Dictionary[eachline] = idx
+        idx += 1
+    fileDictionary.close()
+    print >> sys.stderr,"Dictionary Loaded."
+    
+    # 加载用户历史
+    documentList = []
+    listallhistory = GetHistory()
+    # print listallhistory
+
+    for eachhistory in listallhistory: 
+        if eachhistory.like == 1: # 如果是喜欢的加到documentList
+            eachhistoryinfo = seg.cut(eachhistory.programid.title + ' ' + eachhistory.programid.description) # 现用节目名称和描述的文本作为节目特征文本
+            #eachhistoryinfo = seg.cut(eachhistory.programid.title) # 现用节目名称作为节目特征文本
+            documentList.append(eachhistoryinfo)
+    print >> sys.stderr, "VSM：HistoryList Builded."
+    
+    if BUILD == 1: 
+        # 将用户历史写入到特征文件
+        filehistoryfeature = open(os.path.join(os.path.dirname(__file__),'history.feature').replace('\\','/'),'w')
+        for eachhistory in listallhistory: 
+            if eachhistory.like == 1:
+                eachhistoryinfo = seg.cut(eachhistory.programid.title + ' ' + eachhistory.programid.description) # 现用节目名称和描述的文本作为节目特征文本
+                #eachhistoryinfo = seg.cut(eachhistory.programid.title) # 现用节目名称作为节目特征文本
+                eachhistoryvector = tfidf(eachhistoryinfo, documentList)
+                feature = ''
+                for item in eachhistoryvector.items():
+                    key = str(item[0])
+                    if Dictionary.has_key(key):
+                        id = Dictionary[key]
+                        value = str(item[1])
+                        feature += u'%s:%s ' % (id, value)
+                if len(feature) == 0:
+                    continue
+                feature += '\n'
+            filehistoryfeature.write(feature)
+        filehistoryfeature.close()
+        print >> sys.stderr, "VSM：HistoryFeaturefile Created."
+    # endif
+    
+    # 加载历史文件
+    filehistoryfeature = open(os.path.join(os.path.dirname(__file__),'history.feature').replace('\\','/'),'r')
+    listfeaturelines = filehistoryfeature.readlines()
+    filehistoryfeature.close()
+    print >> sys.stderr, "VSM：HistoryFeaturefile Loaded."
+
+    # 对于每个节目：
+    dictDistances = {}
+    for eachprogram in Programs:
+        # 选择特征文本
+        eachprograminfo = seg.cut(eachprogram.title + ' ' + eachprogram.description) # 现用节目名称和描述的文本作为节目特征文本
+        #eachprograminfo = seg.cut(eachprogram.title) # 现用节目名称作为节目特征文本
+        # 将特征文本变成特征向量
+        eachprogramvector = tfidf(eachprograminfo, documentList) # 现在用TF-IDF方法计算特征权重
+        # 构造特征项及其权重
+        dictfeature = {}
+        for item in eachprogramvector.items():
+            key = str(item[0])
+            if Dictionary.has_key(key):
+                id = Dictionary[key]
+                value = str(item[1])
+                dictfeature[int(id)] = float(value)
+        if len(dictfeature) == 0:
+            continue
+        # print dictfeature
+        
+        dicteachhistory = {}
+        dis = 0.0
+        for eachline in listfeaturelines:
+            eachline = eachline.rstrip()[:-1]
+            if len(eachline) == 0:
+                continue;
+            items = eachline.split(' ')
+            for t in items:
+                key = int(t.split(':')[0])
+                value = float(t.split(':')[1])
+                dicteachhistory[key] = value
+            dis += consine_distance(dicteachhistory, dictfeature)
+        dictDistances[eachprogram.id] = dis
+        # print dicthistory, dictfeature, dictDistances[eachprogram.id]
+    
+    SuggestPrograms = []
+    Templist = sorted(dictDistances.items(),key = lambda d:d[1], reverse = True)
+    for eachitem in Templist:
+        SuggestPrograms.append(GetProgram(int(eachitem[0])))
+    
+    # 返回推荐列表
+    print SuggestPrograms
+    return SuggestPrograms
+
+
 def test1():
     time = datetime(2011,3,16,8,15,0)
     p = GetAllPrograms(time)
     #print p
-    print GetSuggestPrograms(p)
+    plist = GetSuggestPrograms(p)
+    for t in plist:
+        print GetProgram(t)
 
 def test2():
     preferlist = [13, 27, 95, 167, 179, 205, 438, 564, 571, 573, 975, 1216, 1366, 1400, 1480, 1512,
-                  1580, 1623, 1669, 1864, 1905, 2077, 2215, 2225, 2381] 
-    notpreferlist = [118, 122, 158, 294, 440, 607, 854, 921, 943, 994, 1683, 1703, 1923, 3546, 3695,
+                  1580, 1623, 1669, 1864, 1905, 2077, 2215, 2225, 2381, 118, 122, 158, 294, 440, 607, 854, 921, 943, 994, 1683, 1703, 1923, 3546, 3695,
                      1779, 1930, 1934, 3670]
     for item in preferlist:
         WriteHistory(item, 1)
-    for item in notpreferlist:
-        WriteHistory(item, -1)
 
 if __name__ == "__main__":
-    #print AbstractFeature(GetProgram(785))
-    #historylist = GetHistory()
-    #for ll in historylist:
-    #    print ll
-    test1()
+    test2()
     pass

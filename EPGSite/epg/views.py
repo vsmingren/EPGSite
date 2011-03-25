@@ -8,6 +8,8 @@ def showlist(request):
         time = datetime.strptime(request.POST['time'], "%m/%d/%Y %H:%M:%S")
         orderItems = GetAllPrograms(time)
         suggestItems = GetSuggestPrograms(orderItems)
+        n1 = len(orderItems)
+        n2 = len(suggestItems)
         return render_to_response('index.html', locals())
     else:
         return render_to_response('index.html')
