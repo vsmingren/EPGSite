@@ -58,9 +58,15 @@ def selFavAction(request):
 2011/3/25 17:24
 '''
 def searchAction(request):
-    request.encoding = 'utf-8'
+    #request.encoding = 'utf-8'                #依然没有用
     items = {}
     if 'keywords' in request.POST and request.POST['keywords']:
         items = Search(request.POST['keywords'])
         #items = Search(u'你好吗 爱荷华好')
     return render_to_response("showProgram.html",locals())
+
+'''
+2011/3/26 13:47
+'''
+def welcomeAction(request):
+    return render_to_response("welcome.html",locals())
