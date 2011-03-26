@@ -7,10 +7,10 @@ class SEG(object):
         _curpath=os.path.normpath(os.path.join(os.getcwd(),_localDir))
         curpath=_curpath
         self.d = {}
-        print >> sys.stderr,"loading dict..."
+        print >> sys.stderr,"SmallSeg: Loading Dict..."
         self.set([x.rstrip() for x in file(os.path.join(curpath,"main.dic")) ])
         self.specialwords= set([x.rstrip().decode('utf-8') for x in file(os.path.join(curpath,"suffix.dic"))])
-        print >> sys.stderr,'dict ok.'
+        print >> sys.stderr,'SmallSeg: Dict ok.'
     #set dictionary(a list)
     def set(self,keywords):
         p = self.d
