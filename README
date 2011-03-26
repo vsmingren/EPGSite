@@ -3,5 +3,4 @@
 1、每次做特征提取都要加载词典，想办法系统启动时一次加载，之后多次使用
 	想法：能否利用__init__.py
 
-Zoozy create a new develop branch
 
