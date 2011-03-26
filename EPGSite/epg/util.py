@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-#dddd
 import os
 from django.db.models import Q
 from datetime import datetime
@@ -8,7 +7,6 @@ from svmutil import *
 from smallseg import SEG
 from feature_TFIDF import *
 from cosdistance import *
-import re
 
 seg = SEG()
 
