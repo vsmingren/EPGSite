@@ -1,3 +1,4 @@
+#coding=utf-8
 from django.db import models
         
 class Program(models.Model):
@@ -19,3 +20,8 @@ class History(models.Model):
     def __unicode__(self):
         return '%d %s %s' % (self.like, self.programid.id, self.programid.title)
 
+if __name__ == "main":
+    programs = Program.objects.all()
+    for program in programs:
+        program.title.replace("节目预告","")
+        program.save
