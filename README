@@ -1,26 +1,7 @@
-重构了一下代码，没有预期中的效果好，关键的地方还没解决，出来的问题也很多。。。
-
-现在的目录组织：
-EPGSite是这个站
-EPGSite/sqlite.db就这么一个数据库
-EPGSite/EPGSite是这个站的settings,urls,media,templates
-EPGSite/egp是这个站的应用，也就是我们的项目
-	还想添加其他应用，比如信息丰富和建立用户历史
-EPGSite/epg里面就是具体的应用源程序了 models是模型，urls是URL配置,views相当于以前的Action,具体的操作都放在util里了，其他的没变化
-EPGSite/epg/feature_TFIDF.py是用TF-IDF方法做特征权重的计算
-
 需要修改的：
-1、需要增加一个建立用户历史模型(history.model)的功能，具体需求：
-	能从前端选择喜欢和不喜欢的节目，写到数据库，需要一个新的view
-	能从数据库中读出来送到svm，生成一个history.model
-	最好能迭代,不过这个功能可以暂时不加进去
-2、每次做特征提取都要加载词典，想办法系统启动时一次加载，之后多次使用
+
+1、每次做特征提取都要加载词典，想办法系统启动时一次加载，之后多次使用
 	想法：能否利用__init__.py
-
-其他：
-1、js被我弄丢了,貌似是settings路径什么的设置不对
-
-有什么东西就更新在这个文件里吧
 
 Zoozy create a new develop branch
 

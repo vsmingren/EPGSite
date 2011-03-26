@@ -27,7 +27,7 @@
     <ul>
         {% for item in items %}
             <li>
-                <input type="checkbox" name="like" value="{{item.id}}"/>{{ item.channel }} - <a href="/index/infor/{{ item.id }}">{{ item.title }}</a>
+                <input type="checkbox" name="like" value="{{item.id}}"/>{{ item.channel }} - <a href="/infor/{{ item.id }}">{{ item.title }}</a>
             </li>
         {% endfor %}
     <ul>
@@ -38,7 +38,7 @@
     <ul>
         {% for item in items %}
             <li>
-                <input type="checkbox" name="hate" value="{{item.id}}"/>{{ item.channel }} - <a href="/index/infor/{{ item.id }}">{{ item.title }}</a>
+                <input type="checkbox" name="hate" value="{{item.id}}"/>{{ item.channel }} - <a href="/infor/{{ item.id }}">{{ item.title }}</a>
             </li>
         {% endfor %}
     <ul>

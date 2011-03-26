@@ -25,6 +25,43 @@ def GetAllPrograms(time):
 
 def WriteHistory(pid, prefer):
     History.objects.create(programid_id = pid, like = prefer)
+
+'''
+从节目库中搜索电视节目
+1.分词
+2.遍历所有的关键词，然后将所有搜索结果取交集
+    当结果集为零时，尽量取前面关键词的交集，然后与后面交集取并集(一般靠前的关键词为用户优先选择的)
+    如此迭代直到结果集不在为空
+3.取前十条结果
+'''    
+def Search(keywords):
+#1
+    words = seg.cut(keywords)
+    #words = [u"新闻",u"足球"]
+#2
+    result = []
+    for word in words:
+        print word
+        result.append(set(Program.objects.filter(description__contains=word)))   #模糊匹配
+
+    if result == None:
+        return None;
+    
+    unionResult = result[0]
+    for i in range(1,len(result)):
+        if( len(result[i]) == 0 ):
+            continue
+        tmp = unionResult&result[i]
+        if len(tmp) == 0:
+            break
+        else:
+            unionResult = tmp
+#3
+    unionResult = list(unionResult)
+    if len(unionResult) > 10:
+        return unionResult[0:10]
+    else:
+        return unionResult
     
 def GetSuggestProgramsSVM(Programs, BUILD = 1):
     '从所有节目列表中选取推荐节目，BUILD是否需要重新生成历史模型(TF-IDF + SVM)'
@@ -248,8 +285,7 @@ def GetSuggestPrograms(Programs, BUILD = 1):
 
 def test1():
     time = datetime(2011,3,16,8,15,0)
-    plist = GetSuggestPrograms(GetAllPrograms(time))
-    
+    GetSuggestPrograms(GetAllPrograms(time))
 
 def test2():
     preferlist = [13, 27, 95, 167, 179, 205, 438, 564, 571, 573, 975, 1216, 1366, 1400, 1480, 1512,
